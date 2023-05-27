@@ -1,6 +1,11 @@
 name: Terraform - Staging
 
 on:
+  pull_request:
+    # Sequence of patterns matched against refs/heads
+    branches:    
+      - "*"
+
   workflow_dispatch:
     inputs:
       terraform_operation:
@@ -9,7 +14,7 @@ on:
         default: ""
         type: choice
         options:
-          - plan&apply
+          - plan & apply
 
 permissions:
   contents: read
@@ -103,7 +108,7 @@ jobs:
           }
 
     - name: Terraform Apply
-      if: ${{ github.event.inputs.terraform_operation == 'plan&apply' }} && github.event_name == 'push'
+      if: ${{ github.event.inputs.terraform_operation == 'plan & apply' }} && github.event_name == 'push'
       run: terraform apply -input=false tf.plan
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
