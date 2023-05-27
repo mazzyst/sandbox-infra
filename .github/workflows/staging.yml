@@ -1,12 +1,23 @@
 name: Terraform - Staging
 
 on:
+  push:
+    branches:
+    - main
+    paths: 
+    - staging/**
+  pull_request:
+    branches:
+    - main
+    paths: 
+    - staging/**
+
   workflow_dispatch:
     inputs:
       terraform_operation:
         description: "Terraform plan & apply staging"
         required: true
-        default: ""
+        default: "plan & apply"
         type: choice
         options:
           - plan & apply
@@ -103,7 +114,7 @@ jobs:
           }
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: ${{ github.event.inputs.terraform_operation == 'plan & apply' }} && github.event_name == 'push'
       run: terraform apply -input=false tf.plan
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
