@@ -1,0 +1,27 @@
+on:
+    workflow_dispatch:
+      inputs:
+        terraform_operation:
+          description: "Terraform destroy staging"
+          required: true
+          default: ""
+          type: choice
+          options:
+            - destroy
+
+jobs:
+    terraform:
+      name: "terraform"
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v3
+  
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@v1
+  
+  
+        - name: Terraform destroy
+          run: terraform destroy --auto-approve
+          working-directory: staging
+          if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"
