@@ -1,17 +1,23 @@
 name: Terraform - Staging
 
 on:
+  push:
+    branches:
+    - main
+    paths: 
+    - staging/**
   pull_request:
-    # Sequence of patterns matched against refs/heads
-    branches:    
-      - "*"
+    branches:
+    - main
+    paths: 
+    - staging/**
 
   workflow_dispatch:
     inputs:
       terraform_operation:
         description: "Terraform plan & apply staging"
         required: true
-        default: ""
+        default: "plan & apply"
         type: choice
         options:
           - plan & apply
