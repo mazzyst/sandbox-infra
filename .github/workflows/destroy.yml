@@ -1,3 +1,4 @@
+name: Terraform - Destroy
 on:
     workflow_dispatch:
       inputs:
@@ -11,17 +12,35 @@ on:
 
 jobs:
     terraform:
-      name: "terraform"
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v3
-  
+        runs-on: ubuntu-latest
+        name: Terraform
+        environment: staging 
+        steps:
         - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v1
-  
+          uses: hashicorp/setup-terraform@v2
+          with:
+            terraform_version: 1.1.9
+            terraform_wrapper: false
+            
+        - uses: actions/checkout@v1
+
+        - name: Terraform Init
+          id: init
+          run: terraform init
+          env:
+            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }} # This doesn't have to be a secret. Client IDs are not sensitive.
+            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          working-directory: ./staging # Use your environment folder
+          shell: bash
   
         - name: Terraform destroy
           run: terraform destroy --auto-approve
+          env:
+            ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+            ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+            ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+            ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           working-directory: staging
           if: "${{ github.event.inputs.terraform_operation == 'destroy' }}"

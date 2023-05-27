@@ -1,16 +1,15 @@
 name: Terraform - Staging
 
-'on':
-  push:
-    branches:
-      - main
-    paths:
-      - staging/**
-  pull_request:
-    branches:
-      - main
-    paths:
-      - staging/**
+on:
+  workflow_dispatch:
+    inputs:
+      terraform_operation:
+        description: "Terraform plan & apply staging"
+        required: true
+        default: ""
+        type: choice
+        options:
+          - plan & apply
 
 permissions:
   contents: read
